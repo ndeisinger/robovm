@@ -22,7 +22,7 @@ import java.util.Set;
 import java.io.*;
 
 /**
- *
+ * 
  * @version $Id$
  */
 public abstract class BinaryOpInstruction extends Instruction {
@@ -31,17 +31,17 @@ public abstract class BinaryOpInstruction extends Instruction {
     protected final Value op2;
 
     protected BinaryOpInstruction(Variable result, Value op1, Value op2) {
-    	super();
+        super();
         this.result = result;
         this.op1 = op1;
         this.op2 = op2;
     }
-    
+
     @Override
     public Set<Variable> getWritesTo() {
         return Collections.singleton(result);
     }
-    
+
     @Override
     public Set<VariableRef> getReadsFrom() {
         Set<VariableRef> refs = new HashSet<VariableRef>();
