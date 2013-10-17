@@ -249,8 +249,9 @@ public class MethodCompiler extends AbstractMethodCompiler {
         Set<Local> locals = new HashSet<Local>();
         boolean emitCheckStackOverflow = false;
         for (Unit unit : units) {
-            int lineNum = (unit.getTag("LineNumberTag") == null ? 
-            		1 : Integer.parseInt(unit.getTag("LineNumberTag").toString()));
+            // Update debug context
+            int lineNum = (unit.getTag("LineNumberTag") == null ? -1 : Integer
+                    .parseInt(unit.getTag("LineNumberTag").toString()));
             DebugManager.updateLine(lineNum);
             if (unit instanceof DefinitionStmt) {
                 DefinitionStmt stmt = (DefinitionStmt) unit;
@@ -289,9 +290,10 @@ public class MethodCompiler extends AbstractMethodCompiler {
         if (!body.getTraps().isEmpty()) {
             List<List<Trap>> recordedTraps = new ArrayList<List<Trap>>();
             for (Unit unit : units) {
-            	//Update debug context
-                int lineNum = (unit.getTag("LineNumberTag") == null ? 
-                		1 : Integer.parseInt(unit.getTag("LineNumberTag").toString()));
+                // Update debug context
+                int lineNum = (unit.getTag("LineNumberTag") == null ? -1
+                        : Integer.parseInt(unit.getTag("LineNumberTag")
+                                .toString()));
                 DebugManager.updateLine(lineNum);
                 // Calculate the predecessor units of unit 
                 Set<Unit> incoming = new HashSet<Unit>();
@@ -370,9 +372,9 @@ public class MethodCompiler extends AbstractMethodCompiler {
         }
         
         for (Unit unit : units) {
-        	//TODO: Better handle case with no line info
-            int lineNum = (unit.getTag("LineNumberTag") == null ? 
-            		1 : Integer.parseInt(unit.getTag("LineNumberTag").toString()));
+            // Update debug context
+            int lineNum = (unit.getTag("LineNumberTag") == null ? -1 : Integer
+                    .parseInt(unit.getTag("LineNumberTag").toString()));
             DebugManager.updateLine(lineNum);
             if (branchTargets.containsKey(unit) || trapHandlers.containsKey(unit)) {
                 BasicBlock oldBlock = function.getCurrentBasicBlock();
