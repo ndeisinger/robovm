@@ -40,6 +40,7 @@ public abstract class Instruction {
         return Collections.emptySet();
     }
     
+    //Return debug reference if present
     protected String debugRefString() {
     	if (debugRef != -1)
     	{

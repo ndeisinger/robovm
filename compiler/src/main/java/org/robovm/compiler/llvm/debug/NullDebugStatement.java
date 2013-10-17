@@ -2,7 +2,7 @@ package org.robovm.compiler.llvm.debug;
 
 /**
  * A special debug statement that serves as a null value.
- * @author Nathan Deisinger
+ * @author ndeisinger
  *
  */
 public class NullDebugStatement extends DebugStatement {

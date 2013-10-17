@@ -801,19 +801,7 @@ public class MethodCompiler extends AbstractMethodCompiler {
          */
 
         soot.Value rightOp = stmt.getRightOp();
-        
-        //UW-MADISON DEBUG
-        try
-        {
-	        int currLine = Integer.parseInt(stmt.getTag("LineNumberTag").toString());
-	        System.out.println(currLine);
-        }
-        catch (NullPointerException e)
-        {	
-        	
-        }
-        //DebugManager.updateContext(currLine, className);
-        
+                
         Value result;
 
         if (rightOp instanceof Immediate) {
