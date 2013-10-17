@@ -1,5 +1,10 @@
 package org.robovm.compiler.llvm.debug;
 
+/**
+ * Stores the compile-unit information for a given class.
+ * @author ndeisinger
+ *
+ */
 public class CompileUnitDebugStatement extends DebugStatement {
 
 	private int contextRef;
@@ -16,7 +21,7 @@ public class CompileUnitDebugStatement extends DebugStatement {
 		sb.append("metadata !{i32 786449, "); //Initial tag
 		sb.append("metadata !" + contextRef + ", "); //Source context
 		sb.append("i32 11, "); //Language identifier (DW_TAG_JAVA)
-		sb.append("metadata ! \"RoboVM version 0.0.5\", "); //Compiler version
+		sb.append("metadata ! \"RoboVM version 0.0.6\", "); //Compiler version; TODO: get appropriate version rather than hard-code
 		sb.append("i1 0, "); //TODO: True if optimized
 		sb.append("metadata !\"\", "); //TODO: Compilation flags
 		sb.append("i32 0, "); //Runtime version

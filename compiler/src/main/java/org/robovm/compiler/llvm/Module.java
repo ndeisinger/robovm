@@ -116,13 +116,15 @@ public class Module {
             sb.append(f.toString());
             sb.append("\n");
         }
+        //The below supplies support for multiple compile units in one LLVM file.
+        //I am uncertain if this functionality is ever used.
         if (debugs != null)
         {
         	int[] compileRefs = new int[debugs.size()];
         	int i = 0;
         	for (DebugClass d : debugs)
         	{
-        		sb.append(d.noCompileUnit());
+        		sb.append(d.debugBlocks());
                 sb.append("\n");
                 compileRefs[i] = d.getCompileRef();
         	}

@@ -4,7 +4,7 @@ package org.robovm.compiler.llvm.debug;
  * Represents a debug statement for a return type.  
  * NOTICE: At present this is a 'null' class only.  In the future proper handling of data
  * types will be necessary.
- * @author Nathan Deisinger
+ * @author ndeisinger
  *
  */
 public class TypeDebugStatement extends DebugStatement {

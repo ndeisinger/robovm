@@ -1,29 +1,12 @@
-/* This class written by Nathan Deisinger (ndeisinger@wisc.edu) for personal use in
- * research at the University of Wisconsin-Madison.
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>.
- */
-
 package org.robovm.compiler.llvm.debug;
 
 import java.util.HashMap;
 import org.robovm.compiler.llvm.Function;
 
 /**
- * Manages line-, function-, and file-level debug information for research purposes.
+ * Manages line-, function-, and file-level debug information.
  * Does not provide support for variables/etc.
- * @author Nathan Deisinger
+ * @author ndeisinger
  *
  */
 public class DebugManager {
@@ -42,12 +25,11 @@ public class DebugManager {
 		//Obsolete function; kept here in case we need to do special init work later.
 	}
 	
-	public static void updateLine(int line)// throws Exception
+	public static void updateLine(int line)
 	{
-		if (line == 0 || line == -1)
+		if (line == 0)
 		{
-			DebugException e = new DebugException("Debug info: Bad line value! " + line);
-			throw(e);
+			throw new DebugException("Debug: source defined as line number zero.");
 		}
 		currLine = line;
 	}
@@ -68,7 +50,7 @@ public class DebugManager {
 	
 	/**
 	 * Allows DebugClasses to set up their own debug statements.
-	 * @return
+	 * @return A new integer reference to a debug statement.
 	 */
 	public static int getRefInteger()
 	{
@@ -85,9 +67,7 @@ public class DebugManager {
 		FunctionDebugStatement myDebug = currClass.getFunctions().get(currFunc);
 		if (myDebug == null)
 		{
-			//TODO: Get proper line info.  Soot does not appropriately mark function lines (or I'm not finding them).
-			myDebug = new FunctionDebugStatement(debugCount, 1, currFunc);
-			//myDebug = new FunctionDebugStatement(debugCount, currLine, currFunc);
+			myDebug = new FunctionDebugStatement(debugCount, currLine, currFunc);
 			myDebug.getFunctionInfo(func);
 			currClass.addFunction(myDebug);
 			debugCount++;
@@ -97,24 +77,17 @@ public class DebugManager {
 	
 	public static int getLineRef()
 	{
+		if (currLine == -1) return -1; //Don't make debug statements if no source info available
 		if (!activeDebug) return -1;
-		/*
-		DebugClass myClass = classMap.get(currFile);
-		if (myClass == null)
-		{
-			System.out.println("Creating class " + currFile);
-			myClass = new DebugClass(null, currFile, currDir);
-			classMap.put(currFile, myClass);
-		}*/
+		
 		FunctionDebugStatement myFunc = currClass.getFunctions().get(currFunc);
 		LineDebugStatement myDebug = currClass.getLines().get(currLine);
 		if (myDebug == null)
 		{
 			if (myFunc == null)
 			{
-				System.out.println("Warning: No containing function found");
-				System.out.println(getEnv());
-				myDebug = new LineDebugStatement(debugCount, currLine, 0);
+				//No containing function found.  This shouldn't happen.
+				throw new DebugException("Debug: No containing function found for current line.");
 			}
 			else
 			{
@@ -131,20 +104,19 @@ public class DebugManager {
 		activeDebug = doDebug;
 	}
 	
-	public static DebugClass getClass(String filename)
+	//TODO: Potential for clashes between classes with same name.
+	//Since we compile classes one at a time and then store them
+	//in the appropriate module, this shouldn't be a problem,
+	//but we should be aware.
+	public static DebugClass getClass(String className)
 	{
-		return classMap.get(filename);
+		return classMap.get(className);
 	}
 	
 	/**
-	 * Call this just before writing out debug information.  It will set up the appropriate debug
-	 * blocks that depend on others.  eg. function blocks.
+	 * For debugging purposes (as in, debugging the debug information, not what we're putting to LLVM.)
+	 * @return A summary of the current DebugManager environment.
 	 */
-	public static void finalizeDebug()
-	{
-		
-	}
-	
 	public static String getEnv()
 	{
 		return ("currDir: " + currDir +"\n currFile: " + currFile + "\n currFunc: " + currFunc + "\n currLine: " + currLine);

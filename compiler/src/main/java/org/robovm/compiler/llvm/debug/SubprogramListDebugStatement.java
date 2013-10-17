@@ -4,6 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+/**
+ * A debug block that lists subprograms (methods/functions) of a program.
+ * @author ndeisinger
+ *
+ */
 public class SubprogramListDebugStatement extends DebugStatement {
 	
 	LinkedList<FunctionDebugStatement> myFuncs;
@@ -11,7 +16,6 @@ public class SubprogramListDebugStatement extends DebugStatement {
 	public SubprogramListDebugStatement(int reference, int line) {
 		super(reference, line);
 		myFuncs = new LinkedList<FunctionDebugStatement>();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void addFunction(FunctionDebugStatement function)

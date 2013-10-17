@@ -1,5 +1,10 @@
 package org.robovm.compiler.llvm.debug;
 
+/**
+ * Stores the context (file/directory) for a given class.
+ * @author ndeisinger
+ *
+ */
 public class ContextDebugStatement extends DebugStatement {
 	
 	private String file;

@@ -1,8 +1,15 @@
 package org.robovm.compiler.llvm.debug;
 
+/**
+ * Superclass for various types of LLVM debug statements.  Keeps a line number,
+ * global debug reference, and the actual formatted metadata string.
+ * 
+ * In the future we may want to move line number out to relevant subclasses only.
+ * @author ndeisinger
+ *
+ */
 public abstract class DebugStatement implements Comparable<DebugStatement>
 {
-	//Can be a first block (is that constant?), function statement, scoping statement, or line number statement
 	
 	protected int line; //Appropriate line number 
 	protected int reference; //Global debug reference number
@@ -12,7 +19,7 @@ public abstract class DebugStatement implements Comparable<DebugStatement>
 	{
 		if (line == 0)
 		{
-			RuntimeException e = new RuntimeException("Bad line value!");
+			DebugException e = new DebugException("Bad line value!");
 			//e.printStackTrace();
 			throw(e);
 		}
@@ -25,6 +32,9 @@ public abstract class DebugStatement implements Comparable<DebugStatement>
 		return reference;
 	}
 	
+	/**
+	 * Returns the LLVM metadata block for this debug info (eg. the text at the end of the LLVM file).
+	 */
 	public String toString()
 	{
 		return "!" + reference + " = " + text;

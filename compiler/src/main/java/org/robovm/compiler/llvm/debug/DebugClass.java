@@ -6,26 +6,28 @@ import java.util.HashMap;
 
 /**
  * Stores the debug information for a given class.
- * @author Nathan Deisinger
+ * @author ndeisinger
  *
  */
 public class DebugClass {
 
-	private NullDebugStatement nullStmt;
-	private ContextDebugStatement context;
-	private CompileUnitDebugStatement unit;
-	private TypeDebugStatement nullType;
-	private SubprogramListDebugStatement subprograms;
-	private FileDebugStatement file;
-	
 	private HashMap<Integer, LineDebugStatement> lineStatements;
 	private HashMap<String, FunctionDebugStatement> functionStatements;
+
+	private SubprogramListDebugStatement subprograms; //List of functions
+	private ContextDebugStatement context; //Context of class (filename/directory)
+	private NullDebugStatement nullStmt; //Null debug statement
+	private CompileUnitDebugStatement unit; //Compile unit debug block
+	private TypeDebugStatement nullType; //Dummy type statement
+	private FileDebugStatement file; //Reference to context block
+	
 	private String className;
 	private String fileName;
 	private String directory;
 	
 	public DebugClass(String className, String fileName, String directory)
 	{
+		
 		this.className = className;
 		this.fileName = fileName;
 		this.directory = directory;
@@ -64,7 +66,7 @@ public class DebugClass {
 		return unit.getRef();
 	}
 	
-	public String noCompileUnit()
+	public String debugBlocks()
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append(unit.toString());
@@ -100,14 +102,12 @@ public class DebugClass {
 	 */
 	public String toString()
 	{
-		//Print out llvm.cu setup
-		//Then compile unit block
-		//
+		//Print out llvm.cu marker and then actual debug data
 		StringBuilder sb = new StringBuilder();
 		sb.append("!llvm.dbg.cu = !{!");
 		sb.append(unit.getRef());
 		sb.append("}");
-		sb.append(noCompileUnit());
+		sb.append(debugBlocks());
 		return sb.toString();
 	}
 

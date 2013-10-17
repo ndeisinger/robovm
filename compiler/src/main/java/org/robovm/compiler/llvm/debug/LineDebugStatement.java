@@ -4,7 +4,7 @@ package org.robovm.compiler.llvm.debug;
  * Extends the abstract DebugStatement class to contain information for a line number debug statement.
  * 
  * The statement is of the form "metadata !{i32 [line number], i32 0, i32 ![scope reference], null}".
- * @author Nathan Deisinger
+ * @author ndeisinger
  *
  */
 public class LineDebugStatement extends DebugStatement {

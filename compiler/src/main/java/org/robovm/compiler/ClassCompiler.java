@@ -295,17 +295,6 @@ public class ClassCompiler {
         }
 
         Context context = new Context();
-        //UW HACKING: Get line numbers and print them out for debug purposes.
-        /*
-        for (SootMethod sm : clazz.getSootClass().getMethods())
-        {
-        	sm.getActiveBody().
-        }*/
-        //UW MADISON HACKING: Write LLVM  out to disk.
-        if (clazz.getClassName().contains("HelloWorld"))
-        {
-        	System.out.println(output.toString());
-        }
         Module module = Module.parseIR(context, output.toByteArray(), clazz.getClassName());
         PassManager passManager = createPassManager();
         passManager.run(module);
@@ -517,22 +506,21 @@ public class ClassCompiler {
         String file;
         if (sourceInfo != null)
         {
-        	//TODO: Java doesn't seem to save the source directory.  We fake it here with a local one.
+        	//TODO: Soot's SourceFileTag does _not_ store the directory at the moment.
+        	//We fake it here with a local one.
         	file = sourceInfo.getSourceFile();
-        	//String absolutePath = sourceInfo.getAbsolutePath(); !THIS DOES NOT WORK
         	String absolutePath = "." + file;
-        	//System.out.println(file + " " + absolutePath);
         	String directory = absolutePath.substring(0, absolutePath.lastIndexOf(file));
         	DebugManager.updateContext(clazz.getClassName(), file, directory);
         }
         else
         {
+        	//No source info stored.
         	DebugManager.updateContext(clazz.getClassName(), "NO_FILE", "NO_DIRECTORY");
         }
-        //TODO: Hack to ensure no instructions are at line 0.
-        DebugManager.updateLine(1);
         
-        //System.out.println("Source path: " + (SourceFileTag)(clazz.getSootClass().getTag("SourceFileTag")).toString());
+        //Set current line to -1 so that we don't make debug info for lines without it.
+        DebugManager.updateLine(-1);
         
         // Add a <clinit> method if the class has ConstantValueTags but no <clinit>.
         // This has to be done before createInfoStruct() is called otherwise the
@@ -581,31 +569,32 @@ public class ClassCompiler {
         for (SootMethod method : sootClass.getMethods()) {
             String name = method.getName();
             int lineNum = 1;
+            //The below code fakes the line number for the function -
+            //it will mark the function as being defined where its code begins.
             try
             {
-            	method.retrieveActiveBody(); //TODO: Careful here.
+            	method.retrieveActiveBody(); //I don't believe this causes any problems vs.
+            	//getting the body in the methodCompiler, but I could be mistaken.
             	
-            	if (method.getActiveBody().hasTag("LineNumberTag"))
-            	{
-            		
-            		Body body = method.getActiveBody();
-            		Stmt s = (Stmt)body.getUnits().getFirst();
-                    while (s instanceof IdentityStmt){
-                        s = (Stmt)body.getUnits().getSuccOf(s);
-                    }
-                    String tempLine = s.getTag("LineNumberTag").toString();
-            		//method.getActiveBody().getTag("LineNumberTag").toString();
-            		lineNum = Integer.parseInt(tempLine);
-            	}
+        		Body body = method.getActiveBody();
+        		Stmt s = (Stmt)body.getUnits().getFirst();
+                while (s instanceof IdentityStmt){
+                    s = (Stmt)body.getUnits().getSuccOf(s);
+                }
+                Stmt backStmt = (Stmt)body.getUnits().getPredOf(s);
+                s = (backStmt == null ? s : backStmt);
+                String tempLine = s.getTag("LineNumberTag").toString();
+        		lineNum = Integer.parseInt(tempLine);
             }
             catch (RuntimeException e)
             {
-            	//No active body - occurs in <init> functions and other auxilliary ones
-            	System.out.println("No line number for method " + method.getName() + " " + method.getNumber());
+            	//Artifact code here - set lineNum to something sane if can't parse method
             	lineNum = 1;
             }
+            //TODO: Needs further investigation of Soot's line-number tagging
+            //so as to be able to get the appropriate line number for the method signature.
             DebugManager.updateLine(lineNum);
-            DebugManager.updateFunc(name); //TODO: Ensure no collision/proper names here
+            DebugManager.updateFunc(clazz.getClassName() + "_" + name);
             if (isBridge(method)) {
                 bridgeMethod(method);
             } else if (isStruct(sootClass) && ("_sizeOf".equals(name) 
@@ -657,14 +646,10 @@ public class ClassCompiler {
         infoFn.add(new Ret(new ConstantBitcast(classInfoStruct.ref(), I8_PTR_PTR)));
         mb.addFunction(infoFn);
         
+        //Link debug class to module
         mb.addDebug(clazz.getDebugClass());
         
         out.write(mb.build().toString().getBytes("UTF-8"));
-        //if (clazz.getClassName().equalsIgnoreCase("HelloWorld") || clazz.getClassName().equalsIgnoreCase("HelloWorld$SubClass"))
-        //{
-        	//out.write("\n".getBytes("UTF-8"));
-        	//out.write(DebugManager.getClass(clazz.getClassName()).toString().getBytes("UTF-8"));
-        //}
         
         ClazzInfo ci = clazz.resetClazzInfo();
         

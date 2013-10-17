@@ -126,7 +126,7 @@ public class Linker {
     }
     
     public void link(Set<Clazz> classes) throws IOException {
-    	DebugManager.toggleDebug(false);
+    	DebugManager.toggleDebug(false); //Prevent debug info from being generated for linker functions
         Set<Clazz> linkClasses = new TreeSet<Clazz>(classes);
         config.getLogger().info("Linking %d classes", linkClasses.size());
 
