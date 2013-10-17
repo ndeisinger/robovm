@@ -35,7 +35,6 @@ public class DebugManager {
 	private static String currDir = null;
 	private static int debugCount = 1;
 	private static DebugClass currClass = null;
-	public static enum BlockType {COMPILE_BLOCK, SUBPROGRAM_LIST, FUNCTION_BLOCK, LINE_BLOCK, NULL_BLOCK};	
 	private static HashMap<String, DebugClass> classMap = new HashMap<String, DebugClass>();
 		
 	public static void initDebug()
@@ -47,8 +46,7 @@ public class DebugManager {
 	{
 		if (line == 0 || line == -1)
 		{
-			RuntimeException e = new RuntimeException("Debug info: Bad line value! " + line);
-			//e.printStackTrace();
+			DebugException e = new DebugException("Debug info: Bad line value! " + line);
 			throw(e);
 		}
 		currLine = line;
@@ -83,18 +81,11 @@ public class DebugManager {
 	public static int getFuncRef(Function func)
 	{
 		if (!activeDebug) return -1;
-		/*
-		DebugClass myClass = classMap.get(currFile);
-		if (myClass == null)
-		{
-			System.out.println("Creating class " + currFile);
-			myClass = new DebugClass(null, currFile, currDir);
-			classMap.put(currFile, myClass);
-		}*/
+		
 		FunctionDebugStatement myDebug = currClass.getFunctions().get(currFunc);
 		if (myDebug == null)
 		{
-			//TODO: Get proper line info.
+			//TODO: Get proper line info.  Soot does not appropriately mark function lines (or I'm not finding them).
 			myDebug = new FunctionDebugStatement(debugCount, 1, currFunc);
 			//myDebug = new FunctionDebugStatement(debugCount, currLine, currFunc);
 			myDebug.getFunctionInfo(func);

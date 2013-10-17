@@ -10,7 +10,6 @@ public class ContextDebugStatement extends DebugStatement {
 		this.file = file;
 		this.directory = directory;
 		text = "metadata !{metadata !\"" + file  + "\", metadata !\"" + directory + "\"}";
-		// TODO Auto-generated constructor stub
 	}
 
 }

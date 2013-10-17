@@ -92,6 +92,7 @@ import org.robovm.llvm.Target;
 import org.robovm.llvm.TargetMachine;
 import org.robovm.llvm.binding.CodeGenFileType;
 
+import soot.Body;
 import soot.BooleanType;
 import soot.ByteType;
 import soot.CharType;
@@ -107,8 +108,10 @@ import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 import soot.VoidType;
+import soot.jimple.IdentityStmt;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.jimple.Stmt;
 import soot.jimple.internal.JReturnVoidStmt;
 import soot.tagkit.ConstantValueTag;
 import soot.tagkit.Tag;
@@ -577,8 +580,30 @@ public class ClassCompiler {
         
         for (SootMethod method : sootClass.getMethods()) {
             String name = method.getName();
-            int lineNum = (method.getTag("LineNumberTag") == null ? 
-            		1 : Integer.parseInt(method.getTag("LineNumberTag").toString()));
+            int lineNum = 1;
+            try
+            {
+            	method.retrieveActiveBody(); //TODO: Careful here.
+            	
+            	if (method.getActiveBody().hasTag("LineNumberTag"))
+            	{
+            		
+            		Body body = method.getActiveBody();
+            		Stmt s = (Stmt)body.getUnits().getFirst();
+                    while (s instanceof IdentityStmt){
+                        s = (Stmt)body.getUnits().getSuccOf(s);
+                    }
+                    String tempLine = s.getTag("LineNumberTag").toString();
+            		//method.getActiveBody().getTag("LineNumberTag").toString();
+            		lineNum = Integer.parseInt(tempLine);
+            	}
+            }
+            catch (RuntimeException e)
+            {
+            	//No active body - occurs in <init> functions and other auxilliary ones
+            	System.out.println("No line number for method " + method.getName() + " " + method.getNumber());
+            	lineNum = 1;
+            }
             DebugManager.updateLine(lineNum);
             DebugManager.updateFunc(name); //TODO: Ensure no collision/proper names here
             if (isBridge(method)) {

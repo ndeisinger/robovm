@@ -243,7 +243,6 @@ public class Linker {
             
             mb.addFunction(createCheckcast(mb, clazz, typeInfo));
             mb.addFunction(createInstanceof(mb, clazz, typeInfo));
-            //mb.addDebug(clazz.getDebugClass());
         }
         
         Arch arch = config.getArch();

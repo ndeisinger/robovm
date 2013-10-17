@@ -15,7 +15,7 @@ public class CompileUnitDebugStatement extends DebugStatement {
 		StringBuilder sb = new StringBuilder();
 		sb.append("metadata !{i32 786449, "); //Initial tag
 		sb.append("metadata !" + contextRef + ", "); //Source context
-		sb.append("i32 11, "); //Language identifier
+		sb.append("i32 11, "); //Language identifier (DW_TAG_JAVA)
 		sb.append("metadata ! \"RoboVM version 0.0.5\", "); //Compiler version
 		sb.append("i1 0, "); //TODO: True if optimized
 		sb.append("metadata !\"\", "); //TODO: Compilation flags
@@ -27,11 +27,8 @@ public class CompileUnitDebugStatement extends DebugStatement {
 		sb.append("metadata !" + nullRef + ", "); //List of imported entities
 		sb.append("metadata !\"\""); //Split debug filename
 		sb.append("}");
-		sb.append("; [ DW_TAG_compile_unit ] ");
-		sb.append(" [/home/nate/research/csi/Release/HelloWorld.c] [DW_LANG_JAVA]");
 		
 		text = sb.toString();
-		// TODO Auto-generated constructor stub
 	}
 	
 
