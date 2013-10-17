@@ -80,6 +80,7 @@ import org.robovm.compiler.llvm.StructureType;
 import org.robovm.compiler.llvm.Value;
 import org.robovm.compiler.llvm.Variable;
 import org.robovm.compiler.llvm.VariableRef;
+import org.robovm.compiler.llvm.debug.DebugManager;
 import org.robovm.compiler.trampoline.FieldAccessor;
 import org.robovm.compiler.trampoline.Invoke;
 import org.robovm.compiler.trampoline.LdcString;
@@ -111,6 +112,7 @@ import soot.jimple.JimpleBody;
 import soot.jimple.internal.JReturnVoidStmt;
 import soot.tagkit.ConstantValueTag;
 import soot.tagkit.Tag;
+import soot.tagkit.SourceFileTag;
 
 /**
  *
@@ -223,6 +225,7 @@ public class ClassCompiler {
             return true;
         }
         
+        
         Set<Dependency> dependencies = ci.getDependencies();
         for (Dependency dep : dependencies) {
             Clazz depClazz = config.getClazzes().load(dep.getClassName());
@@ -289,6 +292,17 @@ public class ClassCompiler {
         }
 
         Context context = new Context();
+        //UW HACKING: Get line numbers and print them out for debug purposes.
+        /*
+        for (SootMethod sm : clazz.getSootClass().getMethods())
+        {
+        	sm.getActiveBody().
+        }*/
+        //UW MADISON HACKING: Write LLVM  out to disk.
+        if (clazz.getClassName().contains("HelloWorld"))
+        {
+        	System.out.println(output.toString());
+        }
         Module module = Module.parseIR(context, output.toByteArray(), clazz.getClassName());
         PassManager passManager = createPassManager();
         passManager.run(module);
@@ -494,8 +508,28 @@ public class ClassCompiler {
         instanceFields = getInstanceFields(sootClass);
         classType = getClassType(sootClass);
         instanceType = getInstanceType(sootClass);
-        
         attributesEncoder.encode(mb, sootClass);
+        
+        SourceFileTag sourceInfo =  (SourceFileTag) clazz.getSootClass().getTag("SourceFileTag");
+        String file;
+        if (sourceInfo != null)
+        {
+        	//TODO: Java doesn't seem to save the source directory.  We fake it here with a local one.
+        	file = sourceInfo.getSourceFile();
+        	//String absolutePath = sourceInfo.getAbsolutePath(); !THIS DOES NOT WORK
+        	String absolutePath = "." + file;
+        	//System.out.println(file + " " + absolutePath);
+        	String directory = absolutePath.substring(0, absolutePath.lastIndexOf(file));
+        	DebugManager.updateContext(clazz.getClassName(), file, directory);
+        }
+        else
+        {
+        	DebugManager.updateContext(clazz.getClassName(), "NO_FILE", "NO_DIRECTORY");
+        }
+        //TODO: Hack to ensure no instructions are at line 0.
+        DebugManager.updateLine(1);
+        
+        //System.out.println("Source path: " + (SourceFileTag)(clazz.getSootClass().getTag("SourceFileTag")).toString());
         
         // Add a <clinit> method if the class has ConstantValueTags but no <clinit>.
         // This has to be done before createInfoStruct() is called otherwise the
@@ -543,6 +577,10 @@ public class ClassCompiler {
         
         for (SootMethod method : sootClass.getMethods()) {
             String name = method.getName();
+            int lineNum = (method.getTag("LineNumberTag") == null ? 
+            		1 : Integer.parseInt(method.getTag("LineNumberTag").toString()));
+            DebugManager.updateLine(lineNum);
+            DebugManager.updateFunc(name); //TODO: Ensure no collision/proper names here
             if (isBridge(method)) {
                 bridgeMethod(method);
             } else if (isStruct(sootClass) && ("_sizeOf".equals(name) 
@@ -594,7 +632,14 @@ public class ClassCompiler {
         infoFn.add(new Ret(new ConstantBitcast(classInfoStruct.ref(), I8_PTR_PTR)));
         mb.addFunction(infoFn);
         
+        mb.addDebug(clazz.getDebugClass());
+        
         out.write(mb.build().toString().getBytes("UTF-8"));
+        //if (clazz.getClassName().equalsIgnoreCase("HelloWorld") || clazz.getClassName().equalsIgnoreCase("HelloWorld$SubClass"))
+        //{
+        	//out.write("\n".getBytes("UTF-8"));
+        	//out.write(DebugManager.getClass(clazz.getClassName()).toString().getBytes("UTF-8"));
+        //}
         
         ClazzInfo ci = clazz.resetClazzInfo();
         

@@ -24,12 +24,13 @@ public class Fence extends Instruction {
     private final Ordering ordering;
 
     public Fence(Ordering ordering) {
+    	super();
         this.ordering = ordering;
     }
     
     @Override
     public String toString() {
-        return "fence " + ordering;
+        return "fence " + ordering  + debugRefString();
     }
 
 }

@@ -29,12 +29,14 @@ public class Br extends Instruction {
     private final BasicBlockRef destFalse;
 
     public Br(BasicBlockRef dest) {
+    	super();
         this.cond = null;
         this.destTrue = dest;
         this.destFalse = null;
     }
     
     public Br(Value cond, BasicBlockRef destTrue, BasicBlockRef destFalse) {
+    	super();
         if (cond.getType() != Type.I1) {
             throw new IllegalArgumentException("Condition must have type " + Type.I1);
         }
@@ -54,8 +56,8 @@ public class Br extends Instruction {
     @Override
     public String toString() {
         if (cond != null) {
-            return "br i1 " + cond + ", label %" + destTrue.getName() + ", label %" + destFalse.getName();
+            return "br i1 " + cond + ", label %" + destTrue.getName() + ", label %" + destFalse.getName() + debugRefString();
         }
-        return "br label %" + destTrue.getName();
+        return "br label %" + destTrue.getName()  + debugRefString();
     }
 }

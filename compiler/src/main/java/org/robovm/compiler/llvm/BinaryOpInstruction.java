@@ -19,6 +19,7 @@ package org.robovm.compiler.llvm;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.io.*;
 
 /**
  *
@@ -30,6 +31,17 @@ public abstract class BinaryOpInstruction extends Instruction {
     protected final Value op2;
 
     protected BinaryOpInstruction(Variable result, Value op1, Value op2) {
+    	super();
+    	/*
+    	try {
+			PrintWriter debugOut = new PrintWriter(new File("out.txt"));
+			debugOut.println(debugRef);
+			debugOut.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+    	System.out.println(debugRef);
         this.result = result;
         this.op1 = op1;
         this.op2 = op2;

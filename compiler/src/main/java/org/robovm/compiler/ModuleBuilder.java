@@ -39,6 +39,7 @@ import org.robovm.compiler.llvm.Module;
 import org.robovm.compiler.llvm.NullConstant;
 import org.robovm.compiler.llvm.StringConstant;
 import org.robovm.compiler.llvm.UserType;
+import org.robovm.compiler.llvm.debug.DebugClass;
 
 /**
  *
@@ -53,6 +54,7 @@ public class ModuleBuilder {
     private final List<UserType> types = new ArrayList<UserType>();
     private final List<String> asm = new ArrayList<String>();
     private final Set<String> symbols = new HashSet<String>();
+    private final List<DebugClass> debugs = new ArrayList<DebugClass>();
     private int counter = 0;
     private Map<String, Global> strings = new HashMap<String, Global>();;
 
@@ -115,6 +117,13 @@ public class ModuleBuilder {
         asm.add(s);
     }
     
+    public void addDebug(DebugClass d) {
+    	if (d != null)
+    	{
+    		debugs.add(d);
+    	}
+    }
+    
     public void addFunctionDeclaration(FunctionDeclaration fd) {
         if (symbols.contains(fd.getName())) {
             throw new IllegalArgumentException("Symbol " + fd.getName() + " already defined");
@@ -143,7 +152,15 @@ public class ModuleBuilder {
     }
     
     public Module build() {
-        return new Module(includes, types, globals, aliases, 
-                functionDeclarations, asm, functions);
+    	if (debugs.isEmpty())
+    	{
+	        return new Module(includes, types, globals, aliases, 
+	                functionDeclarations, asm, functions);
+    	}
+    	else
+    	{
+	        return new Module(includes, types, globals, aliases, 
+	                functionDeclarations, asm, functions, debugs);
+    	}
     }
 }

@@ -60,6 +60,7 @@ import org.robovm.compiler.llvm.StructureConstant;
 import org.robovm.compiler.llvm.StructureConstantBuilder;
 import org.robovm.compiler.llvm.Type;
 import org.robovm.compiler.llvm.Value;
+import org.robovm.compiler.llvm.debug.DebugManager;
 import org.robovm.llvm.Context;
 import org.robovm.llvm.Module;
 import org.robovm.llvm.PassManager;
@@ -125,6 +126,7 @@ public class Linker {
     }
     
     public void link(Set<Clazz> classes) throws IOException {
+    	DebugManager.toggleDebug(false);
         Set<Clazz> linkClasses = new TreeSet<Clazz>(classes);
         config.getLogger().info("Linking %d classes", linkClasses.size());
 
@@ -241,12 +243,14 @@ public class Linker {
             
             mb.addFunction(createCheckcast(mb, clazz, typeInfo));
             mb.addFunction(createInstanceof(mb, clazz, typeInfo));
+            //mb.addDebug(clazz.getDebugClass());
         }
         
         Arch arch = config.getArch();
         OS os = config.getOs();
         
         Context context = new Context();
+                
         Module module = Module.parseIR(context, mb.build().toString(), "linker.ll");
         PassManager passManager = new PassManager();
         passManager.addAlwaysInlinerPass();

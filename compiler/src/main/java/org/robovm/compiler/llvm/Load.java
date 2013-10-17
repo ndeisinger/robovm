@@ -64,6 +64,7 @@ public class Load extends UnaryOpInstruction {
             sb.append(", align ");
             sb.append(alignment);            
         }
+        sb.append(debugRefString());
         return sb.toString();
     }
 }

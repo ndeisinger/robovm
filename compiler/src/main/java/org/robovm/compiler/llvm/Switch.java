@@ -35,6 +35,7 @@ public class Switch extends Instruction {
     }
     
     public Switch(Value value, BasicBlockRef def, Map<IntegerConstant, BasicBlockRef> alt) {
+    	super();
         if (!value.isInteger()) {
             throw new IllegalArgumentException("Integer type expected");
         }
@@ -70,6 +71,7 @@ public class Switch extends Instruction {
             sb.append(' ');
         }
         sb.append("]");
+        sb.append(debugRefString());
         return sb.toString();
     }
 }

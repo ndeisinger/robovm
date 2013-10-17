@@ -43,6 +43,6 @@ public class Fcmp extends BinaryOpInstruction {
     
     @Override
     public String toString() {
-        return result + " = fcmp " + cond + " " + op1.getType() + " " + op1 + ", " + op2;
+        return result + " = fcmp " + cond + " " + op1.getType() + " " + op1 + ", " + op2  + debugRefString();
     }
 }

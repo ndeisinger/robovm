@@ -29,6 +29,7 @@ public class Getelementptr extends Instruction {
     private final Value[] idx;
 
     public Getelementptr(Variable result, Value ptr, int ... idx) {
+    	super();
         if (!ptr.isPointer()) {
             throw new IllegalArgumentException("PointerType expected");
         }
@@ -47,6 +48,7 @@ public class Getelementptr extends Instruction {
     }
 
     public Getelementptr(Variable result, Value ptr, Value ... idx) {
+    	super();
         if (!ptr.isPointer()) {
             throw new IllegalArgumentException("PointerType expected");
         }
@@ -88,6 +90,7 @@ public class Getelementptr extends Instruction {
             sb.append(" ");
             sb.append(idx[i]);
         }
+        sb.append(debugRefString());
         return sb.toString();
     }
 }

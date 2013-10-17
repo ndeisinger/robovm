@@ -89,6 +89,7 @@ import org.robovm.compiler.llvm.Variable;
 import org.robovm.compiler.llvm.VariableRef;
 import org.robovm.compiler.llvm.Xor;
 import org.robovm.compiler.llvm.Zext;
+import org.robovm.compiler.llvm.debug.DebugManager;
 import org.robovm.compiler.trampoline.Anewarray;
 import org.robovm.compiler.trampoline.Checkcast;
 import org.robovm.compiler.trampoline.GetField;
@@ -248,6 +249,9 @@ public class MethodCompiler extends AbstractMethodCompiler {
         Set<Local> locals = new HashSet<Local>();
         boolean emitCheckStackOverflow = false;
         for (Unit unit : units) {
+            int lineNum = (unit.getTag("LineNumberTag") == null ? 
+            		1 : Integer.parseInt(unit.getTag("LineNumberTag").toString()));
+            DebugManager.updateLine(lineNum);
             if (unit instanceof DefinitionStmt) {
                 DefinitionStmt stmt = (DefinitionStmt) unit;
                 if (stmt.getLeftOp() instanceof Local) {
@@ -285,6 +289,10 @@ public class MethodCompiler extends AbstractMethodCompiler {
         if (!body.getTraps().isEmpty()) {
             List<List<Trap>> recordedTraps = new ArrayList<List<Trap>>();
             for (Unit unit : units) {
+            	//Update debug context
+                int lineNum = (unit.getTag("LineNumberTag") == null ? 
+                		1 : Integer.parseInt(unit.getTag("LineNumberTag").toString()));
+                DebugManager.updateLine(lineNum);
                 // Calculate the predecessor units of unit 
                 Set<Unit> incoming = new HashSet<Unit>();
                 if (units.getFirst() != unit && units.getPredOf(unit).fallsThrough()) {
@@ -362,6 +370,10 @@ public class MethodCompiler extends AbstractMethodCompiler {
         }
         
         for (Unit unit : units) {
+        	//TODO: Better handle case with no line info
+            int lineNum = (unit.getTag("LineNumberTag") == null ? 
+            		1 : Integer.parseInt(unit.getTag("LineNumberTag").toString()));
+            DebugManager.updateLine(lineNum);
             if (branchTargets.containsKey(unit) || trapHandlers.containsKey(unit)) {
                 BasicBlock oldBlock = function.getCurrentBasicBlock();
                 function.newBasicBlock(new Label(unit));
@@ -789,6 +801,19 @@ public class MethodCompiler extends AbstractMethodCompiler {
          */
 
         soot.Value rightOp = stmt.getRightOp();
+        
+        //UW-MADISON DEBUG
+        try
+        {
+	        int currLine = Integer.parseInt(stmt.getTag("LineNumberTag").toString());
+	        System.out.println(currLine);
+        }
+        catch (NullPointerException e)
+        {	
+        	
+        }
+        //DebugManager.updateContext(currLine, className);
+        
         Value result;
 
         if (rightOp instanceof Immediate) {

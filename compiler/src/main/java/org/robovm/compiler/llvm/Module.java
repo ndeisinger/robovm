@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import org.robovm.compiler.llvm.debug.DebugClass;
 
 import org.apache.commons.io.IOUtils;
 
@@ -35,6 +36,7 @@ public class Module {
     private final List<FunctionDeclaration> functionDeclarations;
     private final List<UserType> types;
     private final List<String> asm;
+    private final List<DebugClass> debugs;
 
     public Module(List<URL> includes, List<UserType> types,
             List<Global> globals, List<Alias> aliases,
@@ -48,6 +50,22 @@ public class Module {
         this.functionDeclarations = functionDeclarations;
         this.asm = asm;
         this.functions = functions;
+        this.debugs = null;
+    }
+    
+    public Module(List<URL> includes, List<UserType> types,
+            List<Global> globals, List<Alias> aliases,
+            List<FunctionDeclaration> functionDeclarations, List<String> asm,
+            List<Function> functions, List<DebugClass> debugs) {
+        
+        this.includes = includes;
+        this.types = types;
+        this.globals = globals;
+        this.aliases = aliases;
+        this.functionDeclarations = functionDeclarations;
+        this.asm = asm;
+        this.functions = functions;
+        this.debugs = debugs;
     }
 
     @Override
@@ -96,6 +114,31 @@ public class Module {
         sb.append("\n");
         for (Function f : functions) {
             sb.append(f.toString());
+            sb.append("\n");
+        }
+        if (debugs != null)
+        {
+        	int[] compileRefs = new int[debugs.size()];
+        	int i = 0;
+        	for (DebugClass d : debugs)
+        	{
+        		sb.append(d.noCompileUnit());
+                sb.append("\n");
+                compileRefs[i] = d.getCompileRef();
+        	}
+        	sb.append("!llvm.dbg.cu = !{");
+        	for (i = 0; i < compileRefs.length; i++)
+        	{
+        		if (i != (compileRefs.length - 1))
+        		{
+        			sb.append("!" + compileRefs[i] + ", ");
+        		}
+        		else
+        		{
+        			sb.append("!" + compileRefs[i]);
+        		}
+        	}
+    		sb.append("}");
             sb.append("\n");
         }
         return sb.toString();

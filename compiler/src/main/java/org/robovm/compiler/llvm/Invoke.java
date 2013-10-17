@@ -91,6 +91,6 @@ public class Invoke extends FunctionCallInstruction {
     @Override
     public String toString() {
         String s = super.toString();
-        return s + " to label %" + to + " unwind label %" + unwind;
+        return s + " to label %" + to + " unwind label %" + unwind + debugRefString();
     }
 }

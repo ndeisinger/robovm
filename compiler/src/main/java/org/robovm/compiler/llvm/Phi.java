@@ -30,6 +30,7 @@ public class Phi extends Instruction {
     private final VariableRef[] vars;
 
     public Phi(Variable result, VariableRef ... vars) {
+    	super();
         if (vars.length < 2) {
             throw new IllegalArgumentException("At least two variables expected");
         }
@@ -71,6 +72,7 @@ public class Phi extends Instruction {
             sb.append(bb.getName());
             sb.append(" ]");
         }
+        sb.append(debugRefString());
         return sb.toString();
     }
 }

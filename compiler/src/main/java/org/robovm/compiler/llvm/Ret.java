@@ -27,10 +27,12 @@ public class Ret extends Instruction {
     private final Value value;
 
     public Ret() {
+    	super();
         this.value = null;
     }
     
     public Ret(Value value) {
+    	super();
         this.value = value;
     }
     
@@ -45,8 +47,8 @@ public class Ret extends Instruction {
     @Override
     public String toString() {
         if (value != null) {
-            return "ret " + value.getType() + " " + value;
+            return "ret " + value.getType() + " " + value + debugRefString();
         }
-        return "ret void";
+        return "ret void" + debugRefString();
     }
 }

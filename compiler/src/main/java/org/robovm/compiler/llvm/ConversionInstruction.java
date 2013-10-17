@@ -32,6 +32,6 @@ public abstract class ConversionInstruction extends UnaryOpInstruction {
     
     @Override
     public String toString() {
-        return result + " = " + name + " " + op.getType() + " " + op + " to " + type;
+        return result + " = " + name + " " + op.getType() + " " + op + " to " + type  + debugRefString();
     }
 }

@@ -18,6 +18,7 @@ package org.robovm.compiler.llvm;
 
 import java.util.Collections;
 import java.util.Set;
+import org.robovm.compiler.llvm.debug.DebugManager;
 
 /**
  *
@@ -25,6 +26,11 @@ import java.util.Set;
  */
 public abstract class Instruction {
     BasicBlock basicBlock;
+    int debugRef = -1;
+    
+    public Instruction() {
+    	debugRef = DebugManager.getLineRef();
+    }
 
     public Set<Variable> getWritesTo() {
         return Collections.emptySet();
@@ -32,6 +38,14 @@ public abstract class Instruction {
     
     public Set<VariableRef> getReadsFrom() {
         return Collections.emptySet();
+    }
+    
+    protected String debugRefString() {
+    	if (debugRef != -1)
+    	{
+    		return ", !dbg !" + debugRef;
+    	}
+    	return "";
     }
     
 }

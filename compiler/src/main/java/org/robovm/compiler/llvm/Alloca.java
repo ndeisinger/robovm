@@ -30,6 +30,7 @@ public class Alloca extends Instruction {
     private final Type type;
 
     public Alloca(Variable result, Type type) {
+    	super();
         this.result = result;
         this.type = type;
     }
@@ -41,6 +42,6 @@ public class Alloca extends Instruction {
     
     @Override
     public String toString() {
-        return result + " = alloca " + type;
+        return result + " = alloca " + type + debugRefString();
     }
 }

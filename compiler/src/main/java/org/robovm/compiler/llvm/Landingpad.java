@@ -32,7 +32,7 @@ public class Landingpad extends Instruction {
     
     public Landingpad(Variable result, Constant personalityFn,
             boolean cleanup, Clause ... clauses) {
-        
+        super();
         this.result = result;
         this.personalityFn = personalityFn;
         this.cleanup = cleanup;
@@ -57,6 +57,7 @@ public class Landingpad extends Instruction {
             sb.append(' ');
             sb.append(clause);
         }
+        sb.append(debugRefString());
         return sb.toString();
     }
     

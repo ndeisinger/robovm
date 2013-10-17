@@ -42,6 +42,6 @@ public class Icmp extends BinaryOpInstruction {
     
     @Override
     public String toString() {
-        return result + " = icmp " + cond + " " + op1.getType() + " " + op1 + ", " + op2;
+        return result + " = icmp " + cond + " " + op1.getType() + " " + op1 + ", " + op2  + debugRefString();
     }
 }

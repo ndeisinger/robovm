@@ -28,6 +28,7 @@ public abstract class UnaryOpInstruction extends Instruction {
     protected final Value op;
 
     protected UnaryOpInstruction(Variable result, Value op) {
+    	super();
         this.result = result;
         this.op = op;
     }

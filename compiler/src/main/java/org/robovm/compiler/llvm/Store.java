@@ -41,6 +41,7 @@ public class Store extends Instruction {
     }
     
     public Store(Value value, Value pointer, boolean _volatile, Ordering ordering, int alignment) {
+    	super();
         this.value = value;
         this.pointer = pointer;
         this._volatile = _volatile;
@@ -85,6 +86,7 @@ public class Store extends Instruction {
             sb.append(", align ");
             sb.append(alignment);            
         }
+        sb.append(debugRefString());
         return sb.toString();
     }
 }

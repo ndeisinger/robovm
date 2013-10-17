@@ -37,6 +37,7 @@ import org.robovm.compiler.config.Config;
 import org.robovm.compiler.config.Config.TargetType;
 import org.robovm.compiler.config.OS;
 import org.robovm.compiler.config.Resource;
+import org.robovm.compiler.llvm.debug.DebugManager;
 import org.robovm.compiler.log.ConsoleLogger;
 import org.robovm.compiler.target.LaunchParameters;
 import org.robovm.compiler.target.ios.IOSSimulatorLaunchParameters;
@@ -197,6 +198,7 @@ public class AppCompiler {
     }
     
     public void compile() throws IOException {
+    	DebugManager.initDebug();
         TreeSet<Clazz> compileQueue = getRootClasses();
         Set<Clazz> linkClasses = new HashSet<Clazz>();
         while (!compileQueue.isEmpty() && !Thread.currentThread().isInterrupted()) {

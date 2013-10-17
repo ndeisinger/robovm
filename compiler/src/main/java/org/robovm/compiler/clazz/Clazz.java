@@ -26,6 +26,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.robovm.compiler.llvm.debug.DebugClass;
+import org.robovm.compiler.llvm.debug.DebugManager;
 
 import soot.SootClass;
 
@@ -42,6 +44,7 @@ public abstract class Clazz implements Comparable<Clazz> {
 
     private ClazzInfo clazzInfo = null; 
     private SootClass sootClass = null;
+    private DebugClass debugClass = null;
     
     Clazz(Clazzes clazzes, String fileName, AbstractPath path) {
         this.clazzes = clazzes;
@@ -116,6 +119,14 @@ public abstract class Clazz implements Comparable<Clazz> {
             sootClass = clazzes.getSootClass(this);
         }
         return sootClass;
+    }
+    
+    public DebugClass getDebugClass() {
+    	if (debugClass == null)
+    	{
+    		debugClass = DebugManager.getClass(this.className);
+    	}
+    	return debugClass;
     }
     
     @Override

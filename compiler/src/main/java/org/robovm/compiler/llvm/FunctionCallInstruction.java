@@ -45,6 +45,7 @@ public abstract class FunctionCallInstruction extends Instruction {
     }
     
     protected FunctionCallInstruction(String name, Variable result, Value function, Argument ... args) {
+        super();
         if (!function.isFunction()) {
             throw new IllegalArgumentException("Function type expected");
         }
@@ -156,6 +157,7 @@ public abstract class FunctionCallInstruction extends Instruction {
             sb.append(args[i]);
         }
         sb.append(')');
+        sb.append(debugRefString());
         return sb.toString();
     }
 }

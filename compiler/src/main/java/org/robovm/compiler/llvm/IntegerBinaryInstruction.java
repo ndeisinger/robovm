@@ -37,6 +37,6 @@ public abstract class IntegerBinaryInstruction extends BinaryOpInstruction {
     
     @Override
     public String toString() {
-        return result + " = " + name + " " + op1.getType() + " " + op1 + ", " + op2;
+        return result + " = " + name + " " + op1.getType() + " " + op1 + ", " + op2  + debugRefString();
     }
 }
